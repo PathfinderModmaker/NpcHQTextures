@@ -38,13 +38,24 @@ namespace NpcHQTextures
         public static void Init()
         {
 
+
+
+
+
+
+
+
+            //Main.DebugLog($"Prefabs / BlueprintUnits: {i.ToString()}/{blueprintUnits.Count().ToString()}");
+
+
+
             Main.texOnDiskInfoList = new Dictionary<string, Vector2Int>();
 
             string hqDir = Main.hqTexPath;
 
             List<string> texturePathList = Directory.GetFiles(hqDir, "*.png", SearchOption.AllDirectories).Where(d => !d.Contains(@"/-/") && !d.Contains(@"\-\") && !d.Contains(@"014x")).ToList();
 
-            Main.DebugLog(texturePathList.Count().ToString());
+          //  Main.DebugLog(texturePathList.Count().ToString());
 
 
 
@@ -52,7 +63,7 @@ namespace NpcHQTextures
 
             Main.customPrefabUnits = new Dictionary<string, string>();
             Main.allVariations = new Dictionary<UnitViewLink, UnitCustomizationVariation>();
-      
+
 
             List<UnitCustomizationPreset> presets = ResourcesLibrary.GetBlueprints<UnitCustomizationPreset>().ToList();
 
@@ -93,10 +104,115 @@ namespace NpcHQTextures
 
             }
 
+            
+            List<BlueprintUnit> blueprintUnits = ResourcesLibrary.GetBlueprints<BlueprintUnit>().ToList();
+
+            int i = 0;
+            foreach (BlueprintUnit blueprintUnit1 in blueprintUnits)
+            {
 
 
+                if (blueprintUnit1.CustomizationPreset != null && !allVariations.ContainsKey(blueprintUnit1.Prefab))
+                {
+                    UnitEntityView unitEntityView = ResourcesLibrary.TryGetResource<UnitEntityView>(blueprintUnit1.Prefab.AssetId, false);
+
+                    if (unitEntityView != null && unitEntityView.GetComponentsInChildren<SkinnedMeshRenderer>().Count() > 0)
+                    {
+
+                        foreach (SkinnedMeshRenderer smr in unitEntityView.GetComponentsInChildren<SkinnedMeshRenderer>())
+                        {
+
+                            if (smr.material != null && !string.IsNullOrEmpty(smr.material?.mainTexture?.name))
+                            {
+                                if (smr.material.mainTexture.name.StartsWith("0"))
+                                {
+                                    Main.DebugLog("total: "+smr.material.mainTexture.name);
+
+                                   // saveTex(ensureUniqueFileName(Path.Combine(Main.hqTexPath, "-", blueprintUnit1.name +" - "+smr.material.mainTexture.name+".png")), smr.material.mainTexture as Texture2D);
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            
         }
 
+            /*
+        public static string ensureUniqueFileName(string path)
+        {
+            if (File.Exists(path))
+            {
+                int ix = 0;
+                string fileNamePathStub = Path.Combine(Directory.GetParent(path).FullName, Path.GetFileNameWithoutExtension(path) + "_");
+                string fileNamePath = null;
+                do
+                {
+                    ix++;
+                    fileNamePath = String.Format("{0}{1}{2}", fileNamePathStub, ix, ".png");
+                } while (File.Exists(fileNamePath));
+                return fileNamePath;
+            }
+            return path;
+        }
+        private static void saveTex(string fullpath, Texture2D texture)
+        {
+        
+
+            if (texture != null)
+            {
+
+                byte[] bytes = duplicateTexture(texture).EncodeToPNG();
+
+                //   ((line = reader.ReadLine()) != null)
+
+
+
+                File.WriteAllBytes(fullpath, bytes);
+                Main.DebugLog("Disk, The file was created successfully at " + fullpath);
+            }
+            else
+            {
+                Main.DebugLog("Disk, not created: " + fullpath);
+            }
+        }
+
+
+        private static Texture2D duplicateTexture(Texture2D source)
+        {
+
+
+            try
+            {
+                RenderTexture renderTex = RenderTexture.GetTemporary(
+                            source.width,
+                            source.height,
+                            0,
+                            RenderTextureFormat.Default,
+                            RenderTextureReadWrite.Linear);
+
+                Graphics.Blit(source, renderTex);
+                RenderTexture previous = RenderTexture.active;
+                RenderTexture.active = renderTex;
+
+                Texture2D readableText = new Texture2D(source.width, source.height);
+                readableText.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+                readableText.Apply();
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(renderTex);
+                return readableText;
+            }
+            catch (Exception e)
+            {
+
+                Main.DebugLog("dupliactor error: " + e);
+            }
+            return null;
+        }
+        */
         public static string OrigTexName = "";
 
         public static Texture2D ReadableText;
@@ -107,7 +223,10 @@ namespace NpcHQTextures
         {
 
 
-
+            if(texfullpath == "x" || origtexname == "x")
+            {
+                return unitEntityView;
+            };
 
             //  Main.DebugLog("a");
 
@@ -116,8 +235,7 @@ namespace NpcHQTextures
                 Main.DebugLog("unitEntityViewTexReplacer: unitEntityView has SkinnedMeshRenderer");
 
 
-
-                if (string.IsNullOrEmpty(origtexname))
+                    if (string.IsNullOrEmpty(origtexname))
                 {
                     foreach (SkinnedMeshRenderer smr in unitEntityView.GetComponentsInChildren<SkinnedMeshRenderer>())
                     {
@@ -174,14 +292,15 @@ namespace NpcHQTextures
 
 
                                 Main.DebugLog("unitEntityViewTexReplacer smr: " + texfullpath);
-                                //  Main.DebugLog("unitEntityViewTexReplacer smr: " + origtexname);
+                                //Main.DebugLog("unitEntityViewTexReplacer smr: " + origtexname);
 
                                 break;
                             }
                         }
                     }
                 }
-                else if (string.IsNullOrEmpty(texfullpath))
+                
+               else  if (string.IsNullOrEmpty(texfullpath))
                 {
                     bool found = false;
                     foreach (string path in Main.texOnDiskInfoList.Keys)
@@ -215,7 +334,7 @@ namespace NpcHQTextures
 
                 string anyInMesh = "false";
 
-                // Main.DebugLog("1");
+                Main.DebugLog("a");
 
 
 
@@ -223,7 +342,7 @@ namespace NpcHQTextures
                 {
                  //   Main.OrigTexName = origtexname;
 
-                    //    Main.DebugLog("2");
+                      Main.DebugLog("b");
 
                     try
                     {
@@ -268,7 +387,7 @@ namespace NpcHQTextures
                         if (texture2D != null)
                         {
                            // Main.ReadableText = readableText;
-                            // Main.DebugLog("3");
+                            Main.DebugLog("c");
 
                             //   if (unitEntityView.CharacterAvatar != null)
                             //   {
@@ -295,10 +414,16 @@ namespace NpcHQTextures
 
                                 }
 
+                                Main.DebugLog("wtf: (" + origtexname + " - " + tname + " - " + anyInMesh + ") ");
+                                Main.DebugLog(texfullpath);
+                                
                                 //   unitEntityView.GetComponentsInChildren<SkinnedMeshRenderer>().First(x => (tname = x.material.mainTexture.name) == origtexname).material.mainTexture = readableText;
                                 // Main.DebugLog(tname2);
                             }
-                            //   Main.DebugLog("wtf: (" + origtexname + " - " + tname + " - " + anyInMesh + ") ");
+                            else
+                            {
+                                Main.DebugLog("wtf: (" + origtexname + " - " + tname + " - " + anyInMesh + ") ");
+                            }
 
 
                         }
@@ -321,8 +446,96 @@ namespace NpcHQTextures
         public static Tuple<string, string> randomPool(BlueprintUnit blueprintUnit, UnitEntityView unitEntityView)
         {
 
+            
+
             string presetName = "";
-            UnitCustomizationPreset preset;
+            UnitCustomizationPreset preset = null;
+
+
+            Main.DebugLog("1");
+
+            
+            switch (blueprintUnit.name)
+           {
+
+                
+                case "BanditAdmirersShortie":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Bandits_CustomizationPreset", "3", "015_Halfling_Male_Diffuse_Atlas.png"), "015_Halfling_Male_Diffuse_Atlas");
+                case "BaronationGuest":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Noble_CustomizationPreset", "1", "002_Human_Male_Diffuse_Atlas.png"), "002_Human_Male_Diffuse_Atlas");
+                case "BaronationGuest_6":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Noble_CustomizationPreset", "4", "016_Halfling_Female_Diffuse_Atlas.png"), "016_Halfling_Female_Diffuse_Atlas");
+                case "BossGodEmperor":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "BanditsCaster_CustomizationPreset", "1", "009_Gnome_Male_Diffuse_Atlas.png"), "009_Gnome_Male_Diffuse_Atlas");
+                case "C51 - LinziQ3_Firebrand":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Bandits_CustomizationPreset 1", "4", "013_Human_Female_Diffuse_Atlas.png"), "013_Human_Female_Diffuse_Atlas");
+                case "CR1_SpecialGnomeBanditFighterMelee_ThornRiverCamp":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Bandits_CustomizationPreset 1", "2", "027_Gnome_Male_Diffuse_Atlas.png"), "027_Gnome_Male_Diffuse_Atlas");
+                case "DunswardVillageTrader":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Commoner_CustomizationPreset", "1", "004_Human_Male_Diffuse_Atlas.png"), "004_Human_Male_Diffuse_Atlas");
+                case "GlenebonVillageTrader":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Commoner_CustomizationPreset", "1", "009_Human_Male_Diffuse_Atlas.png"), "009_Human_Male_Diffuse_Atlas");
+                case "Priest_Ghost":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Commoner_CustomizationPreset", "1", "008_Human_Male_Diffuse_Atlas.png"), "008_Human_Male_Diffuse_Atlas");
+                case "SilverstepVillageTrader":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Commoner_CustomizationPreset", "1", "011_Human_Female_Diffuse_Atlas.png"), "011_Human_Female_Diffuse_Atlas");
+                case "StartingTrader":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Commoner_CustomizationPreset", "1", "002_Human_Male_Diffuse_Atlas.png"), "002_Human_Male_Diffuse_Atlas");
+                case "MivonGuest":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Noble_CustomizationPreset", "3", "001_Human_Male_Diffuse_Atlas.png"), "001_Human_Male_Diffuse_Atlas");
+                case "MivonGuest 1":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Noble_CustomizationPreset", "2", "001_Human_Male_Diffuse_Atlas.png"), "001_Human_Male_Diffuse_Atlas");
+                case "PitaxTown_Trader 1":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Noble_CustomizationPreset", "4", "015_Halfling_Male_Diffuse_Atlas.png"), "015_Halfling_Male_Diffuse_Atlas");
+                case "Poisoner":
+                    return Tuple.Create(Path.Combine(Main.hqTexPath, "RandomPool", "Bandits_CustomizationPreset 1", "5", "035_Halfling_Male_Diffuse_Atlas.png"), "035_Halfling_Male_Diffuse_Atlas");
+
+
+                case "BaronationGuest_2":
+                    //004_Human_Female_Diffuse_Atlas (square shapes leather wizard)
+                    return Tuple.Create("x", "x");
+                case "BaronationGuest_5":
+                    //035_HalfOrc_Male_Diffuse_Atlas (red-blue stripes "merchant")
+                    return Tuple.Create("x", "x");
+                case "BaronationGuest_7":
+                    //015_Human_Female_Diffuse_Atlas (yellow robe)
+                    return Tuple.Create("x", "x");
+                case "BaronationGuest_9":
+                    //007_Human_Male_Diffuse_Atlas (red-blue stripes "merchant")
+                    return Tuple.Create("x", "x");
+                case "BaronationGuest_11":
+                    //013_HalfOrc_Male_Diffuse_Atlas (square shapes leather wizard)
+                    return Tuple.Create("x", "x");
+                case "BossFallenPriest":
+                    //011_Human_Female_Diffuse_Atlas (plate armor wizard)
+                    return Tuple.Create("x", "x");
+                case "BossSlaver":
+                    //003_Human_Male_Diffuse_Atlas (red robe wizard)
+                    return Tuple.Create("x", "x");
+                case "KamelandsVillageTrader":
+                    //009_Gnome_Male_Diffuse_Atlas (green shirt commoner)
+                    return Tuple.Create("x", "x");
+                case "OutskirtsVillageTrader":
+                    //011_Dwarf_Male_Diffuse_Atlas (white shirt commoner)
+                    return Tuple.Create("x", "x");
+                case "PitaxTown_Trader 2":
+                    //043_Aasimar_Male_Diffuse_Atlas (gold blue stripes noble)
+                    return Tuple.Create("x", "x");
+                case "PitaxTown_Trader 3":
+                    //019_Dwarf_Male_Diffuse_Atlas (red robe wizard)
+                    return Tuple.Create("x", "x");
+                case "SouthNarlmarchesVillageTrader":
+                    //006_Dwarf_Female_Diffuse_Atlas (square shapes leather wizard)
+                    return Tuple.Create("x", "x");
+
+
+
+
+
+            }
+
+            Main.DebugLog("2");
+
             if (blueprintUnit.CustomizationPreset != null)
             {
                 presetName = blueprintUnit.CustomizationPreset.name;
@@ -343,26 +556,32 @@ namespace NpcHQTextures
             }
             else
             {
-                Main.DebugLog("not in preset");
-                return Tuple.Create("", "");
+
+                if (Main.allVariations == null || Main.allVariations.Count() == 0)
+                {
+                    Main.Init();
+                }
+
+                //if (Main.notRandom)
+                if (!Main.allVariations.Keys.ToList().Any(x => x.Load() == unitEntityView) && !Main.allVariations.ContainsKey(blueprintUnit.Prefab))
+                {
+                    Main.DebugLog("not random in any lowest level prefab even");
+                    return Tuple.Create("", "");
+
+                }
+
 
 
             }
+
 
             if (Main.allVariations == null || Main.allVariations.Count() == 0)
             {
                 Main.Init();
             }
 
-            //if (Main.notRandom)
-            if(!Main.allVariations.Keys.ToList().Any(x => x.Load() == unitEntityView) && !Main.allVariations.ContainsKey(blueprintUnit.Prefab))
-            {
-                Main.DebugLog("not random in any lowest level prefab even");
-                return Tuple.Create("", "");
 
-            }
-
-
+            Main.DebugLog("3");
 
 
             Main.DebugLog("randomPool() -  " + blueprintUnit.CharacterName + " - " + blueprintUnit.name + " - " + blueprintUnit.AssetGuid);
@@ -383,7 +602,7 @@ namespace NpcHQTextures
 
 
 
-            BlueprintUnit protoType = blueprintUnit.PrototypeLink as BlueprintUnit;
+         //   BlueprintUnit protoType = blueprintUnit.PrototypeLink as BlueprintUnit;
 
 
 
@@ -407,7 +626,7 @@ namespace NpcHQTextures
 
             //unitEntityView = ResourcesLibrary.TryGetResource<UnitEntityView>(unitEntityView.EntityData.Descriptor.Blueprint.Prefab.AssetId, false);
 
-            // UnitEntityView unitEntityView = ResourcesLibrary.TryGetResource<UnitEntityView>(customPrefabGuid, false);
+
 
             if (unitEntityView != null && unitEntityView.GetComponentsInChildren<SkinnedMeshRenderer>().Count() > 0)
             {
@@ -421,7 +640,7 @@ namespace NpcHQTextures
 
                         //  Main.DebugLog($"smr.material.mainTexture.name: {smr.material.mainTexture.name}");
                         // Main.DebugLog($"texOnDiskInfoList.Count(): {Main.texOnDiskInfoList.Count().ToString()}");
-                          if (Main.texOnDiskInfoList == null || Main.texOnDiskInfoList.Count() == 0)
+                        if (Main.texOnDiskInfoList == null || Main.texOnDiskInfoList.Count() == 0)
                           {
                               Main.Init();
                           }
@@ -459,40 +678,44 @@ namespace NpcHQTextures
                 }
             }
 
-
+            Main.DebugLog("4");
 
             int pf = 0;
             bool stop = false;
-            foreach (UnitVariations uvs in preset.UnitVariations)
+            if (preset != null)
             {
-
-                pf++;
-
-                foreach (UnitCustomizationVariation ucv in uvs.Variations)
+                foreach (UnitVariations uvs in preset.UnitVariations)
                 {
 
+                    pf++;
 
-                    // || ucv.Prefab.Load().Blueprint.AssetGuid == unitEntityView.Blueprint.AssetGuid)
-                    if (/*ucv.Prefab == Main.preset?.Prefab ||*/ ucv.Prefab.Load() == unitEntityView || ucv.Prefab == blueprintUnit.Prefab)
+                    foreach (UnitCustomizationVariation ucv in uvs.Variations)
                     {
-                        Main.DebugLog($"preset.name: {preset.name}");
-                        Main.DebugLog($"UnitVariations index: {pf}");
-                        Main.DebugLog(ucv.Prefab.Load().name);
-                        stop = true;
-                        break;
 
+
+                        // || ucv.Prefab.Load().Blueprint.AssetGuid == unitEntityView.Blueprint.AssetGuid)
+                        if (/*ucv.Prefab == Main.preset?.Prefab ||*/ ucv.Prefab.Load() == unitEntityView || ucv.Prefab == blueprintUnit.Prefab)
+                        {
+                            Main.DebugLog($"preset.name: {preset.name}");
+                            Main.DebugLog($"UnitVariations index: {pf}");
+                            Main.DebugLog(ucv.Prefab.Load().name);
+                            stop = true;
+                            break;
+
+                        }
                     }
-                }
-                if (stop) { break; }
+                    if (stop) { break; }
 
+                }
             }
+            Main.DebugLog("5");
 
             if (!stop)
             {
 
                 List<UnitCustomizationPreset> presets = ResourcesLibrary.GetBlueprints<UnitCustomizationPreset>().ToList();
 
-                foreach (UnitCustomizationPreset preset2 in presets.Where(x => !x.name.Equals(preset.name)))
+                foreach (UnitCustomizationPreset preset2 in presets.Where(x => !x.name.Equals(preset?.name)))
                 {
 
                     //unitCustomizationVariation = preset.SelectVariation(unit, null);
@@ -567,6 +790,8 @@ namespace NpcHQTextures
 
             }
 
+            Main.DebugLog("6");
+
             if (!stop)
             {
 
@@ -585,6 +810,8 @@ namespace NpcHQTextures
             List<string> files = Directory.GetFiles(Path.Combine(path2, presetName, pf.ToString())).ToList();
 
             //   Main.DebugLog($"files in {Path.Combine(path2, presetName, pf.ToString())}: {files.Count().ToString()}");
+
+            Main.DebugLog("7");
 
             foreach (string path in files)
             {
@@ -607,6 +834,8 @@ namespace NpcHQTextures
 
             }
             fileFullPath = "";
+
+            Main.DebugLog("8");
 
             //string dirInPreset = Path.Combine(presetName, pf.ToString(), fileName);
 
@@ -774,6 +1003,8 @@ namespace NpcHQTextures
             }
 
   
+
+
             UnitCustomizationPreset preset = blueprintUnit.CustomizationPreset;
 
           

@@ -34,7 +34,7 @@ namespace NpcHQTextures
             }
            
 
-            Main.DebugLog("CreateView() -  " + __instance.Blueprint.CharacterName + " - " + __instance.Blueprint.name + " - " + __instance.Blueprint.AssetGuid);
+            Main.DebugLog("NEW CreateView() -  " + __instance.Blueprint.CharacterName + " - " + __instance.Blueprint.name + " - " + __instance.Blueprint.AssetGuid);
             Polymorph activePolymorph = __instance.GetActivePolymorph();
             if (activePolymorph != null)
             {
@@ -52,11 +52,11 @@ namespace NpcHQTextures
                         isprefab2 = true;
 
                         Tuple<string, string> result2 = new Tuple<string, string>("", "");
-                               if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
-                        {
-
-                            result2 = Main.randomPool(__instance.Blueprint, unitEntityView);
-                        }
+                        // if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
+                        // {
+                    
+                             result2 = Main.randomPool(__instance.Blueprint, unitEntityView);
+                     //   }
 
                         unitEntityView = Main.unitEntityViewTexReplacer(unitEntityView, result2.Item1, result2.Item2);
 
@@ -72,11 +72,11 @@ namespace NpcHQTextures
                         Tuple<string, string> result = new Tuple<string, string>("", "");
       
                         
-                        if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
-                        {
+                      //  if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
+                       // {
 
                             result = Main.randomPool(__instance.Blueprint, unitEntityView2);
-                        }
+                       // }
 
                         unitEntityView2 = Main.unitEntityViewTexReplacer(unitEntityView2, result.Item1, result.Item2);
                     }
@@ -127,11 +127,11 @@ namespace NpcHQTextures
 
                 Tuple<string, string> result = new Tuple<string, string>("", "");
                 //if (!string.IsNullOrEmpty(__instance.Descriptor.CustomPrefabGuid))
-                if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
-                {
+               // if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
+               // {
 
                     result = Main.randomPool(__instance.Blueprint, unitEntityView3);
-                }
+               // }
 
                 unitEntityView3 = Main.unitEntityViewTexReplacer(unitEntityView3, result.Item1, result.Item2);
 
@@ -172,11 +172,11 @@ namespace NpcHQTextures
                 isprefab = true;
 
                 Tuple<string, string> result2 = new Tuple<string, string>("", "");
-                if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
-                {
+               // if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
+               // {
 
                     result2 = Main.randomPool(__instance.Blueprint, unitEntityView4);
-                }
+               // }
 
                 unitEntityView4 = Main.unitEntityViewTexReplacer(unitEntityView4, result2.Item1, result2.Item2);
 
@@ -197,11 +197,11 @@ namespace NpcHQTextures
                 Tuple<string, string> result = new Tuple<string, string>("", "");
 
 
-                if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
-                {
+               // if (__instance.Blueprint.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(__instance.Blueprint.name))
+               // {
 
                     result = Main.randomPool(__instance.Blueprint, resultView);
-                }
+               // }
 
                 resultView = Main.unitEntityViewTexReplacer(resultView, result.Item1, result.Item2);
             }

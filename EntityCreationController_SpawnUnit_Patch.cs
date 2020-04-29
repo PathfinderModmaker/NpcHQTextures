@@ -38,7 +38,7 @@ namespace NpcHQTextures
                      
                 UnitCustomizationVariation unitCustomizationVariation;
 #if DEBUG
-                if (!first)
+                /*if (!first)
                 {
                 unitCustomizationVariation = unit.CustomizationPreset.SelectVariation(unit, null);
 
@@ -47,7 +47,7 @@ namespace NpcHQTextures
                 else
                 {
                     unitCustomizationVariation = Main.preset;
-                }
+                }*/
 #endif
                 unitCustomizationVariation = unit.CustomizationPreset.SelectVariation(unit, null);
 
@@ -203,11 +203,11 @@ namespace NpcHQTextures
 
                 Tuple<string, string> result2 = new Tuple<string, string>("", "");
                 //if (!string.IsNullOrEmpty(__instance.Descriptor.CustomPrefabGuid))
-                if (unit.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(unit.name))
-                {
+               // if (unit.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(unit.name))
+               // {
 
                     result2 = Main.randomPool(unit, prefab);
-                }
+             //   }
 
                 prefab = Main.unitEntityViewTexReplacer(prefab, result2.Item1, result2.Item2);
 
@@ -230,11 +230,11 @@ namespace NpcHQTextures
             {
                 Tuple<string, string> result = new Tuple<string, string>("", "");
                 //if (!string.IsNullOrEmpty(__instance.Descriptor.CustomPrefabGuid))
-                if (unit.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(unit.name))
-                {
+             //   if (unit.CustomizationPreset != null || Main.customPrefabUnits.ContainsKey(unit.name))
+             //   {
 
                     result = Main.randomPool(unit, unitEntityView);
-                }
+            //    }
 
                 unitEntityView = Main.unitEntityViewTexReplacer(unitEntityView, result.Item1, result.Item2);
             }
@@ -336,7 +336,7 @@ namespace NpcHQTextures
 
             
 
-            string texfullpath = "";
+          //  string texfullpath = "";
             //if (!string.IsNullOrEmpty(__instance.Descriptor.CustomPrefabGuid))
             if(unit.CustomizationPreset != null)
             {
